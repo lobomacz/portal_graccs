@@ -5,6 +5,12 @@
 __pycache__
 db.sqlite3
 media
+migrations/
+media/
+data/
+Dockerfile
+docker-compose.yaml
+docker-compose.yml
 
 # Backup files # 
 *.bak 
