@@ -1,0 +1,16 @@
+{% load static %}
+
+{% load django_bootstrap5 %}
+
+<div class="col-3">
+	<div class="card mb-2">
+		<img class="card-img-top" src="{{ publicacion.portada.url }}" alt="Portada de publicación">
+		<div class="card-body">
+			<a href="{{  publicacion.get_absolute_url }}">
+				<div class="card-title fs-4">
+					{{ publicacion.titulo | upper }}
+				</div>
+			</a>
+		</div>
+	</div>
+</div>

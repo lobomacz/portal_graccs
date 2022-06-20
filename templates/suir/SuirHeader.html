@@ -1,0 +1,56 @@
+<!-- Barra de navegación -->
+{% load static %}
+{% load django_bootstrap5 %}
+{% load bootstrap_icons %}
+<nav class="navbar preload" role="navigation">
+    <div class="navbar-container">
+        <div class="navbar-wrapper">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header u-align-middle">
+                <div class="navbar-header__logo d-inline-block">
+                    <button type="button" class="menu-button d-sm-none d-xs-inline-block" 
+                            data-bs-target="body" data-bs-action="toggle" data-bs-toggle="menu-visible">
+                        <span class="menu-button__icon menu-button__icon-1"></span>
+                        <span class="menu-button__icon menu-button__icon-2"></span>
+                        <span class="menu-button__icon menu-button__icon-3"></span>
+                    </button>
+                    <a class="navbar-header__link" href="/">
+                        <img class="navbar-header__img" src="{% static 'suir/img/graccs-logo.svg' %}" alt="" />
+                    </a>
+                </div>
+            </div>
+            <div class="navbar-text d-none d-md-inline-block">
+                <h4 class="navbar-text__title text-uppercase text-light">
+                        <!-- Pendiente nombre de la sección -->
+                        {% if seccion %}
+                            {{ seccion | upper }}{% if seccion == 'indicador' %}ES{% else %}S{% endif %}
+                        {% else %}
+                            {{ 'Sistema de Información Regional' | upper }}
+                        {% endif %}
+                </h4>
+                <h5 class="navbar-text__date text-light">{{ fecha|date:"d/m/Y" }}</h5>
+            </div>
+            <div class="navbar-menu u-align-middle">
+                <ul class="nav navbar-menu__list">
+                    
+                    <li class="navbar-menu__list-el">
+                        <a id="lnkNoticias" {% if seccion and seccion == 'noticia' %}class="navbar-menu__list-ln active"{% else %}class="navbar-menu__list-ln"{% endif %} href="{% url 'lista_noticias' %}" data-bs-toggle="tooltip" data-bs-placement="top" title="Noticias">
+                            {% bs_icon 'newspaper' extra_classes='navbar-menu__icon' %}
+                        </a>
+                    </li>
+                    <li class="navbar-menu__list-el">
+                        <a href="{% url 'lista_informes' %}" {% if seccion and seccion == 'informe' %}class="navbar-menu__list-ln active"{% else %} class="navbar-menu__list-ln"{% endif %} data-bs-toggle="tooltip" data-bs-placement="top" title="Informes">
+                            {% bs_icon 'file-text' extra_classes='navbar-menu__icon' %}
+                        </a>
+                    </li>
+                    <li class="navbar-menu__list-el">
+                        <!-- Aplica clase 'active' segun el valor de sección activada -->
+                        <a {% if seccion and seccion == 'indicador' %}class="navbar-menu__list-ln active"{% else %}class="navbar-menu__list-ln"{% endif %} href="{% url 'lista_indicadores' %}" data-bs-toggle="tooltip" data-bs-placement="top" title="Indicadores">
+                            {% bs_icon 'bar-chart' extra_classes='navbar-menu__icon' %}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

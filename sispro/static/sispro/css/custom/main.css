@@ -1,0 +1,74 @@
+/* Index section */
+.bd-placeholder-img {
+    font-size: 1.125rem;
+    text-anchor: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+@media (min-width: 768px) {
+    .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+    }
+}
+
+body {
+    padding-bottom: 0;
+}
+
+.float-end {
+    font-size: 1.5rem;
+}
+
+.entity-logo {
+    width: 15rem;
+    border-radius: 1rem;
+    background-color: rgba(183, 183, 183, 0.5);
+}
+
+.mission-detail {
+    text-align: justify;
+}
+
+.navbar-nav {
+    width: 70%;
+    display: flex;
+    justify-content: space-around;
+}
+.search-form {
+    margin: auto;
+}
+
+/* Carousel */
+
+.carousel-item {
+    background-color: gray;
+}
+
+.carousel-item img{
+    left: 9.5rem;
+    min-width: 80%;
+}
+
+/* Protagoist */
+
+#tabs {
+    margin-top: 2rem;
+}
+
+.table-bordered {
+    margin: 2rem 0;
+}
+
+#add-new-protagonist:hover {
+    color: blueviolet;
+}
+
+td.detalle-field {
+    width: 25%;
+}
+
+td.detalle-field > input[type=number] {
+    width: 3rem;
+}

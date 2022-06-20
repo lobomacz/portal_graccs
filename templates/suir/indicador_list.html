@@ -1,0 +1,79 @@
+{% extends './base.html' %}
+
+{% load django_bootstrap5 %}
+
+{% load bootstrap_icons %}
+
+{% block header %}
+	{% include './SuirHeader.html' with seccion=tipo %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+	<div class="row">
+		<div class="col">
+			<h1 class="u-bg-secondary section-header">INDICADORES &#10022;</h1>
+		</div>
+	</div>
+	
+	{% if object_list and object_list.count > 0 %}
+	<div class="row clearfix mt-3">
+		<nav>
+			<form class="d-flex search-form mx-2" action="{% url 'buscar_indicadores' %}" method="get">
+				<input type="search" class="form-control me-2" name="q" placeholder="Buscar" aria-label="buscar">
+				<button class="btn btn-outline-success" data-toggle="tooltip" data-placement="bottom" title="Buscar">
+					{% bs_icon 'search' %}
+				</button>
+			</form>
+		</nav>
+	</div>
+	<div class="row">
+		<div class="col-10">
+			<table class="table table-striped">
+				<thead class="thead-light">
+					<tr>
+						<th>SECTOR</th>
+						<th>INDICADOR</th>
+						<th data-bs-toggle="tooltip" data-bs-placement="top" title="Tiene datos">DATOS</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for indicador in object_list %}
+					<tr>
+						<td class="w-25">{{ indicador.sector.elemento | upper }}</td>
+						<td class="w-50">{{ indicador.titulo | upper }}</td>
+						<td class="w-auto">
+							{% if indicador.valorindicador_set.count > 0 %}
+								{% bs_icon 'hand-thumbs-up-fill' extra_classes="text-success" %}
+							{% else %}
+								{% bs_icon 'hand-thumbs-down-fill' extra_classes="text-danger" %}
+							{% endif %}
+						</td>
+						<td class="w-auto">
+							<a data-toggle="tooltip" data-placement="top" title="Ver" href="{{ indicador.get_absolute_url }}" class="btn btn-outline-success">
+								{% bs_icon 'eye' %}
+							</a>
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			{% include './Pagination.html' with page_obj=page_obj rango_paginas=rango_paginas %}
+		</div>
+	</div>
+	{% else %}
+	<div class="row mt-3">
+		<div class="col-8 mx-auto">
+			<div class="alert alert-warning">
+				NO HAY REGISTROS. REGRESAR AL <a href="{% url 'inicio' %}">INICIO</a>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+</div>
+{% endblock %}
+
+{% block footer %}
+	{% include './SuirFooter.html' %}
+{% endblock %}

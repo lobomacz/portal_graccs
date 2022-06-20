@@ -1,0 +1,7 @@
+.cke_editable img {
+  margin: 13.5px !important;
+}
+
+figure.image, p > img, .cke_widget_element {
+  margin: 13.5px;
+}

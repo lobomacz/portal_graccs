@@ -1,0 +1,58 @@
+{% load static %}
+
+{% if carrusel and carrusel.count > 0 or promovidos and promovidos.count > 0 %}
+<div class="container">
+	<div class="row">
+		<div class="col-8 mx-auto">
+			<div
+				id="suirCarousel" 
+				class="carousel slide u-margin-top-big"
+				data-bs-ride="carousel"
+			>
+				<div class="carousel-indicators">
+					{% with ''|center:carrusel_count as range %}
+						{% for _ in range %}
+							<button type="button" data-bs-target="#suirCarousel" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.counter == 1 %} class="active" {% endif %}aria-label="Slide {{ forloop.counter0 }}"></button>
+						{% endfor %}
+					{% endwith %}
+				</div>
+				<div class="carousel-inner">
+					{% if carrusel and carrusel.count > 0 %}
+						{% for slide in carrusel %}
+							<div class="carousel-item{% if forloop.counter == 1 %} active{% endif %}">
+								<img class="d-block w-100" src="{{ slide.imagen.url }}" alt="{{ slide.titulo | lower }}">
+								<div class="carousel-caption text-end d-none d-md-block">
+									<h5>{{ slide.titulo | upper }}</h5>
+									{% if slide.descripcion %}
+										<p>{{ slide.descripcion | upper }}</p> 
+									{% endif %}
+								</div>
+							</div>
+						{% endfor %}
+					{% endif %}
+					{% if promovidos and promovidos.count > 0 %}
+						{% for slide in promovidos %}
+							<div class="carousel-item{% if carrusel.count == 0 and forloop.counter == 1 %} active{% endif %}">
+								<img class="d-block w-100" src="{{ slide.portada.url }}" alt="{{ slide.titulo | lower }}">
+								<div class="carousel-caption text-end d-none d-md-block">
+									<a class="text-decoration-none text-reset" href="{{ slide.get_absolute_url }}">
+										<h5>{{ slide.titulo | upper }}</h5>
+									</a>
+								</div>
+							</div>
+						{% endfor %}
+					{% endif %}
+				</div>
+				<button class="carousel-control-prev" type="button" data-bs-target="#suirCarousel" data-bs-slide="prev">
+					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					<span class="visually-hidden">Anterior</span>
+				</button>
+				<button class="carousel-control-next" type="button" data-bs-target="#suirCarousel" data-bs-slide="next">
+					<span class="carousel-control-next-icon" aria-hidden="true"></span>
+					<span class="visually-hidden">Siguiente</span>
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+{% endif %}

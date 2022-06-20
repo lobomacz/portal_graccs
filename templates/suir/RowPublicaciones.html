@@ -1,0 +1,29 @@
+{% load static %}
+
+<div class="container">
+
+	{% if not listrow %}
+		<div class="row">
+			<div class="col">
+				<h1 class="{% if tipo == 'noticias' %} u-bg-tertiary {% else %}  u-bg-secondary {% endif %} section-header">{{ titulo | upper }}</h1>
+			</div>
+		</div>
+	{% endif %}
+	
+	<div class="row">
+		{% for publicacion in lista %}
+
+			{% include './ItemPublicacion.html' %}
+		
+		{% endfor %}
+	</div>
+
+	{% if not listrow %}
+		<div class="row">
+			<div class="col-2 mx-auto my-4 text-center">
+				<a {% if tipo == 'noticias' %} href="{% url 'lista_noticias' %}" {% else %} href="{% url 'lista_informes' %}" {% endif %} role="button" class="btn btn-dark btn-lg text-uppercase">Mas {{ tipo  }}</a>
+			</div>
+		</div>
+	{% endif %}
+	
+</div>
