@@ -1,0 +1,97 @@
+{% extends './base.html' %}
+
+{% load django_bootstrap5 %}
+
+{% load bootstrap_icons %}
+
+{% block header %}
+	{% include './SuirHeader.html' with seccion=tipo %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+	<div class="row">
+		<div class="col-10">
+			<div class="card">
+				<img class="card-img-top" src="{{ object.portada.url }}" alt="Portada del indicador">
+				<div class="card-body">
+					<div class="card-title">{{ object.titulo | upper }}</div>
+					<div class="card-subtitle text-muted">SECTOR: {{ object.sector | upper }}</div>
+				</div>
+				<h5 class="h5">DESCRIPCIÓN</h5>
+				<p class="lead">
+					{{ object.descripcion | upper }}
+				</p>
+				<h5 class="h5">FÓRMULA</h5>
+				<p>{{ object.formula }}</p>
+				<h5 class="h5">MÉTRICA</h5>
+				<p>{{ object.metrica }}</p>
+				{% if object.ficha %}
+				<div>
+					<a href="{{ object.ficha.url }}" class="btn btn-outline-secondary">
+						Descargar Ficha <span>{% bs_icon 'download' %}</span>
+					</a>
+				</div>
+				{% endif %}
+				<h5 class="h5">PERIODICIDAD</h5>
+				<p>{{ object.periodicidad | upper }}</p>
+				<h5 class="h5">ENTIDAD RESPONSABLE</h5>
+				<p>{{ object.entidad.nombre | upper }}</p>
+				<h5 class="h5">COLABORADORES</h5>
+				<ul>
+					{% for colaborador in object.colaboradores %}
+					<li>{{ colaborador.siglas | upper }}</li>
+					{% endfor %}
+				</ul>
+				<h5 class="h5">TÉCNICO RESPONSABLE</h5>
+				<p>{{ object.responsable.first_name | upper }} {{ object.responsable.last_name | upper }}</p>
+				<h5 class="h5">NIVELES DE DESAGREGACIÓN</h5>
+				<ul class="list-unstyled">
+					{% for nivel in object.desagregaciones %}
+					<li>{{ nivel.elemento | upper }}</li>
+					{% endfor %}
+				</ul>
+				<h5 class="h5">FUENTE DE DATOS</h5>
+				<p>{{ object.fuente | upper }}</p>
+				<h5 class="h5">MARCO LEGAL</h5>
+				<p>{{ object.marco | upper }}</p>
+				<h5 class="h5">ETIQUETAS</h5>
+				<ul class="list-inline">
+					{% for tag in tags %}
+					<li class="list-inline-item">
+						<span class="badge badge-pill badge-secondary">#{{ tag | lower }}</span>
+					</li>
+					{% endfor %}
+				</ul>
+				<h5 class="h5">VERSION</h5>
+				<p>{{ object.version }}</p>
+				<h5 class="h5">ESTADO DE SEGUIMIENTO</h5>
+				{% if object.seguimiento == True %}
+				<p>EN SEGUIMIENTO ACTIVO<span class="text-warning">{% bs_icon 'lightbulb' %}</span></p>
+				{% else %}
+				<p>SIN SEGUIMIENTO ACTIVO<span class="text-secondary">{% bs_icon 'lightbulb-off' %}</span></p>
+				{% endif %}
+
+				{% if object.valorindicador_set.count > 0 %}
+				<div class="alert alert-primary">VALORES</div>
+				<ul class="list-group">
+					{% for valor in object.valorindicador_set %}
+					<li class="list-group-item">
+						{{ valor.fecha | date:"d-m-Y" }} &mdash; {{ valor.valor }} <a href="{{ valor.get_absolute_url() }}" class="text-decoration-none">
+							{% bs_icon 'arrow-right-short' %}
+						</a>
+					</li>
+					{% endfor %}
+				</ul>
+				{% else %}
+				<div class="alert-warning">NO HAY DATOS DE VALORES</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block footer %}
+	{% include './SuirFooter.html' %}
+{% endblock %}

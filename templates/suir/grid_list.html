@@ -1,0 +1,57 @@
+{% extends './base.html' %}
+
+{% block header %}
+	{% include './SuirHeader.html' with seccion=tipo %}
+{% endblock %}
+
+{% load suir_extras %}
+
+{% block content %}
+
+	<div class="container publicacion-list">
+		<div class="row">
+			<div class="col">
+				<h1 class="{% if tipo == 'noticia' %} u-bg-tertiary {% else %}  u-bg-secondary {% endif %} section-header">{{ tipo | upper }}{{ page_obj | pluralize | upper }} &#10022;</h1>
+			</div>
+		</div>
+
+		{% if object_list and object_list.count > 0 %}
+		
+		
+		<div class="row">
+			<div class="col mx-auto">
+				
+				{% with por_fila=4 %}
+					{% grid_range page_obj por_fila as filas %}
+
+					{% for fila in filas %}
+						{% list_slice page_obj fila por_fila as lista %}
+						{% include './RowPublicaciones.html' with listrow=True %}
+					{% endfor %}
+				{% endwith %}
+				
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-4 mx-auto text-center">
+				<div class="d-inline-block mx-auto">
+					{% paginador page_obj rango_paginas %}
+				</div>
+			</div>
+		</div>
+		{% else %}
+		<div class="row mt-3">
+			<div class="col-8 mx-auto">
+				<div class="alert alert-warning">
+					NO HAY REGISTROS. REGRESAR AL <a href="{% url 'inicio' %}">INICIO</a>
+				</div>
+			</div>
+		</div>
+		{% endif %}
+	</div>
+
+{% endblock %}
+
+{% block footer %}
+	{% include './SuirFooter.html' %}
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends './base.html' %}
+
+{% block header %}
+	{% include './SuirHeader.html' %}
+{% endblock %}
+
+{% if carrusel %}
+	{% block carrusel %}
+		{% include './SuirCarousel.html' %}
+	{% endblock %}
+{% endif %}
+
+{% block content %}
+
+<div>
+	{% if transmision != None %}
+		<div class="mt-5 container d-none d-md-block">
+			<div class="row">
+				<div class="col-6 mx-auto">
+					<div class="overflow-hidden mx-auto justify-content-center border border-3 border-info rounded transmision">
+						{{ transmision.codigo | safe }}
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+
+	{% if anuncios.exists and anuncios.count > 0 %}
+		<div class="container anuncio-container d-none d-md-block">
+			<div class="row">
+				<div class="col-8 mx-auto text-center">
+					<a class="anuncio-link" href="{{ anuncios.0.url }}" target="_blank">
+							<img
+						src="{{ anuncios.0.imagen.url }}"
+						title="{{ anuncios.0.titulo }}"
+						class="anuncio-img rounded"
+						>
+					</a>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+	
+	{% if noticias and noticias.count > 0 %}
+		<section id="seccionNoticias" class="seccion-publicacion">
+			{% include './RowPublicaciones.html' with tipo='noticias' titulo='noticias' lista=noticias only %}
+		</section>
+	{% endif %}
+
+	{% if anuncios.exists and anuncios.count > 1 %}
+		<div class="container anuncio-container d-none d-md-block">
+			<div class="row">
+				<div class="col-8 mx-auto text-center">
+					<a class="anuncio-link" href="{{ anuncios.1.url }}" target="_blank">
+							<img src="{{ anuncios.1.imagen.url }}" title="{{ anuncios.1.titulo }}" class="anuncio-img rounded">
+					</a>
+				</div>
+			</div>
+		</div>
+	{% elif anuncios.exists %}
+		<div class="container anuncio-container d-none d-md-block">
+			<div class="row">
+				<div class="col-8 mx-auto text-center">
+					<a class="anuncio-link" href="{{ anuncios.0.url }}" target="_blank">
+							<img
+						src="{{ anuncios.0.imagen.url }}"
+						title="{{ anuncios.0.titulo }}"
+						class="anuncio-img rounded"
+						>
+					</a>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+
+	{% if informes and informes.count > 0 %}
+		<section id="seccionInformes" class="seccion-publicacion">
+			{% include './RowPublicaciones.html' with tipo='informes' titulo='Gestión Pública' lista=informes only %}
+		</section>
+	{% endif %}
+
+</div>
+	
+{% endblock %}
+
+{% block footer %}
+	{% include './SuirFooter.html' %}
+{% endblock %}

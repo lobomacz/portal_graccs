@@ -1,0 +1,44 @@
+{% load bootstrap_icons %}
+<footer class="footer">
+    <div class="container footer-container">
+        <div class="row align-items-center footer-row">
+            <div class="footer-nav col-md-4 col-sm-6 col-xs-12 text-center">
+                {% if enlaces %}
+                    <ul class="nav">
+                    	<!-- If has links, show inline links -->
+                    	<!-- la url se obtiene de un objeto de lista de links -->
+                        {% for enlace in enlaces %}
+                            <li class="footer-nav__el nav-item">
+                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="{{ enlace.descripcion }}" href="{{ enlace.url }}" class="footer-nav__el-link nav-link" target="_blank">{{ enlace.texto | upper }}</a>
+                            </li>
+                        {% endfor %}
+                            
+                    </ul>
+                {% endif %}
+            </div>
+            <div class="hidden-xs hidden-sm col-md-4 text-center">
+                <div class="footer-copyright">
+                    <p class="footer-copyright__text">Todos los derechos reservados {{ fecha | date:'Y' }} &copy;
+                        <span class="meta-separator">|</span>
+                        <a href="#">Condiciones y Políticas</a>
+                    </p>
+                </div>
+            </div>
+            <div class="hidden-xs col-sm-6 col-md-3">
+                <ul class="nav w-100 links footer-social justify-content-center">
+					<!-- Si hay información general, generar los enlaces a sitios relacionados -->
+					<!-- la url se toma de un campo del objeto generalInfo para cada sitio relacionado. Ej. generalInfo.facebook -->
+                    {% for redsocial in redes %}
+                        <li class="nav-item">
+                            <a href="{{ redsocial.url }}" target="_blank" class="nav-link">
+                                {% bs_icon redsocial.red %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    
+                </ul>
+            </div>
+        </div>
+   </div>
+</footer>
+

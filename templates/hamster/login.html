@@ -1,0 +1,8 @@
+{% extends 'hamster/base.html' %}
+{% block content %}
+	<form method="post" action="/hamster/auth/login/">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<input type="submit" name="" value="Guardar">
+	</form>
+{% endblock %}

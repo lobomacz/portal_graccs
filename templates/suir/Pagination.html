@@ -1,0 +1,48 @@
+{% load django_bootstrap5 %}
+
+{% load bootstrap_icons %}
+
+
+{% if page.paginator.num_pages > 1 %}
+
+<nav aria-label="Navegación de páginas">
+	<ul class="pagination pagination-lg">
+		{% if page.has_previous %}
+			<li class="page-item">
+				<a href="?page={{ page.previous_page_number }}" class="page-link" aria-disabled="false">
+					{% bs_icon 'chevron-left' %}
+				</a>
+			</li>
+		{% endif %}
+
+		{% for pagina in paginas %}
+			{% if not pagina == '...' %}
+				{% if pagina == page.number %}
+					<li class="page-item active" aria-current="page">
+				{% else %}
+					<li class="page-item">
+				{% endif %}
+						<a href="?page={{ pagina }}" class="page-link">
+							{{ pagina }}
+						</a>
+					</li>
+			{% else %}
+				<li class="page-item  disabled">
+					<a href="#" class="page-link pe-none">
+						{{ pagina }}
+					</a>
+				</li>
+			{% endif %}
+		{% endfor %}
+		
+		{% if page.has_next  %}
+			<li class="page-item">
+				<a href="?page={{ page.next_page_number }}" class="page-link" aria-disabled="false">
+					{% bs_icon 'chevron-right' %}
+				</a>
+			</li>
+		{% endif %}
+	</ul>
+</nav>
+
+{% endif %}

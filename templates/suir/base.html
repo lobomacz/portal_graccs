@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<title>{% block title %} Sistema de Información Regional &mdash; SUIR {% endblock %}</title>
+		<meta charset="UTF-8">
+		<meta name="keywords" content="Gobierno, Regional, RACCS, Costa, Caribe, Nicaragua, Autonomía">
+		<meta name="description" content="Sistema de información estadística del Gobierno Regional de la Costa Caribe nicaragüense.">
+		<meta name="author" content="Marvin Córdoba">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		{% block opengraph %}{% endblock %}
+		{# Cargamos la librería de etiquetas de bootstrap4 #}
+		{% load django_bootstrap5 %}
+		{% load bootstrap_icons %}
+		<link rel="icon" type="image/x-icon" href="{% static 'suir/img/favicon.ico' %}">
+		<link rel="stylesheet" href="{% static 'suir/css/bebas.css' %}" type="text/css">
+		<link rel="stylesheet" href="{% static 'suir/css/lato.css' %}" type="text/css">
+		<link rel="stylesheet" href="{% static 'suir/css/maczfont.css' %}" type="text/css">
+		<link rel="stylesheet" href="{% static 'suir/css/graccs.css' %}" type="text/css">
+		<link rel="stylesheet" href="{% static 'bootstrap_icons/css/bootstrap_icons.css' %}" type="text/css">
+		{# Cargamos el CSS y Javascript de bootstrap #}
+		{% bootstrap_css %}
+		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+		<!--<script src="{% static 'suir/js/popper.min.js' %}" ></script>-->
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+		{% bootstrap_javascript %}
+	</head>
+	<body>
+		<div>
+			{% bootstrap_messages %}
+			<div id="page">
+				<div class="background-fill"></div>
+				{% block header %}{% endblock %}
+				<!--<SuirHeader />-->
+				{% block carrusel %}{% endblock %}
+				<!--<SuirCarousel class="preload" />-->
+
+				<div class="page-container preload">
+					{% block content %}{% endblock %}
+				</div>
+				{% block footer %}{% endblock %}
+				<!--<SuirFooter />-->
+				
+			</div>
+		</div>
+	</body>
+	<script>
+		$(document).ready(() => {
+			$('.preload').addClass('mounted');
+		});
+	</script>
+</html>
