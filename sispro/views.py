@@ -127,6 +127,8 @@ class DetalleTablaViewSet(viewsets.ReadOnlyModelViewSet):
 	queryset = DetalleTabla.objects.all()
 	serializer_class = sDetalleTabla
 	permission_classes = [permissions.AllowAny]
+	pagination_class = None
+	page_size = None
 
 	@action(detail=False)
 	def articulos(self, request):
@@ -149,6 +151,14 @@ class ProgramasViewSet(viewsets.ReadOnlyModelViewSet):
 	filter_backends = [SearchFilter]
 	search_fields = ['nombre','codigo']
 	permission_classes = [permissions.AllowAny]
+
+
+# ViewSet de Proyectos para lista de combos
+class ListaProyectosView(generics.ListAPIView):
+	queryset = Proyecto.objects.filter(finalizado=False)
+	serializer_class = sProyecto
+	pagination_class = None
+	page_size = None
 
 
 # ViewSet de Proyectos
@@ -175,6 +185,8 @@ class TecnicosViewSet(viewsets.ReadOnlyModelViewSet):
 	"""
 	queryset = Tecnico.objects.all()
 	serializer_class = sTecnico
+	pagination_class = None
+	page_size = None
 
 	@action(detail=False)
 	def activos(self, request):
@@ -191,6 +203,8 @@ class ComunidadesViewSet(viewsets.ReadOnlyModelViewSet):
 	"""
 	queryset = Comunidad.objects.all()
 	serializer_class = sComunidad
+	pagination_class = None
+	page_size = None
 
 
 # ViewSet de Etnias
@@ -202,6 +216,7 @@ class EtniasViewSet(viewsets.ReadOnlyModelViewSet):
 	queryset = DetalleTabla.objects.filter(tabla__tabla='etnias')
 	serializer_class = sDetalleTabla
 
+
 # ViewSet de Bonos
 class BonosViewSet(viewsets.ReadOnlyModelViewSet):
 
@@ -210,6 +225,8 @@ class BonosViewSet(viewsets.ReadOnlyModelViewSet):
 	"""
 	queryset = Bono.objects.filter(tipo__elemento='bono')
 	serializer_class = sBono
+	pagination_class = None
+	page_size = None
 
 
 # ViewSet de Planes de Inversión
@@ -218,6 +235,14 @@ class PlanesViewSet(BonosViewSet):
 	Hereda de BonosViewSet y únicamente utiliza un queryset distinto
 	"""
 	queryset = Bono.objects.filter(tipo__elemento='plan de inversion')
+
+
+# Vieset de Protagonistas para listas de combos
+class ListaProtagonistasView(generics.ListAPIView):
+	queryset = Protagonista.objects.all()
+	serializer_class = sProtagonista
+	pagination_class = None
+	page_size = None
 
 
 

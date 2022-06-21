@@ -25,5 +25,7 @@ router.register(r'me', MeViewSet)
 urlpatterns = [
 	path('auth/', LoginView.as_view(), name='sispro_login'),
 	path('has-perm/', PermissionView.as_view(), name='sispro_permission'),
+	path('lista-protagonistas/', ListaProtagonistasView.as_view(), name='sispro_all_protagonistas'),
+	path('lista-proyectos/', ListaProyectosView.as_view(), name='sispro_all_proyectos'),
 	path('', include(router.urls)),
 ]
