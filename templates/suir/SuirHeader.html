@@ -32,7 +32,11 @@
             </div>
             <div class="navbar-menu u-align-middle">
                 <ul class="nav navbar-menu__list">
-                    
+                    <li class="navbar-menu__list-el">
+                        <a id="lnkNoticias" class="navbar-menu__list-ln" href="https://aguila1.netkairos.com/8044/stream" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="Transmisión RBS">
+                            {% bs_icon 'broadcast-pin' extra_classes='navbar-menu__icon' %}
+                        </a>
+                    </li>
                     <li class="navbar-menu__list-el">
                         <a id="lnkNoticias" {% if seccion and seccion == 'noticia' %}class="navbar-menu__list-ln active"{% else %}class="navbar-menu__list-ln"{% endif %} href="{% url 'lista_noticias' %}" data-bs-toggle="tooltip" data-bs-placement="top" title="Noticias">
                             {% bs_icon 'newspaper' extra_classes='navbar-menu__icon' %}
