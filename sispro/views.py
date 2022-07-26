@@ -268,7 +268,8 @@ class ProtagonistasBonosViewSet(viewsets.ModelViewSet):
 	def initial(self, request, *args, **kwargs):
 		super().initial(request, *args, **kwargs)
 		if 'location' in request.data.keys() and request.data['location'] != None:
-			self.srid = request.data['location']['srid']
+			if 'srid' in request.data['location'].keys():
+				self.srid = request.data['location']['srid']
 
 
 	def perform_create(self, serializer):
