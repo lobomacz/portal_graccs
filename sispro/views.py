@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import Point
-from django.db.models import Q
+from django.db.models import Q, Count, OuterRef, Subquery
 from django.db import transaction
 from django.urls import reverse_lazy
 from django.conf import settings
@@ -20,7 +20,7 @@ from hitcount.views import HitCountMixin
 from sispro.permissions import IsOwnerOrReadOnly
 from sispro.serializers import *
 from sispro.models import *
-from suir.models import Comunidad, DetalleTabla
+from suir.models import Municipio, Comunidad, DetalleTabla
 import datetime
 import json
 
@@ -195,16 +195,42 @@ class TecnicosViewSet(viewsets.ReadOnlyModelViewSet):
 		return Response(serializer.data)
 
 
+class GeoMunicipiosViewSet(viewsets.ReadOnlyModelViewSet):
+	
+	"""
+	Viewset básico de municipios
+	"""
+
+	queryset = Municipio.objects.annotate(comunidades=Count('comunidad', distinct=True), bonos=Count('comunidad__protagonistabono', distinct=True))
+	serializer_class = sGeoMunicipio
+	bbox_filter_field = "mpoly"
+	filter_backends = [filters.InBBoxFilter]
+
+
 # ViewSet de Comunidades
 class ComunidadesViewSet(viewsets.ReadOnlyModelViewSet):
 
 	"""
-	Un viewset sencillo para visualizar técnicos
+	Un viewset sencillo para visualizar comunidades
 	"""
 	queryset = Comunidad.objects.all()
 	serializer_class = sComunidad
 	pagination_class = None
 	page_size = None
+
+
+# ViewSet de Mapas de Comunidades
+class GeoComunidadesViewSet(viewsets.ReadOnlyModelViewSet):
+
+	"""
+	Un viewset para manejar datos de comunidades con 
+	su referencia geográfica.
+	"""
+	protagonistas = Protagonista.objects.filter(comunidad=OuterRef('pk')).order_by('apellidos')
+	queryset = Comunidad.objects.annotate(protagonistas=Count('protagonista', distinct=True))
+	serializer_class = sGeoComunidad
+	bbox_filter_field = "location"
+	filter_backends = [filters.InBBoxFilter]
 
 
 # ViewSet de Etnias

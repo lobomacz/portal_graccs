@@ -1,7 +1,7 @@
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
+from rest_framework_gis.serializers import GeoFeatureModelSerializer, GeometryField
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from suir.models import DetalleTabla, Comunidad
+from suir.models import DetalleTabla, Municipio, Comunidad
 from sispro.models import *
 
 # Serializadores de modelos
@@ -45,6 +45,18 @@ class sBono(serializers.ModelSerializer):
 	class Meta:
 		model = Bono
 		fields = '__all__'
+
+
+class sGeoMunicipio(GeoFeatureModelSerializer):
+
+	comunidades = serializers.IntegerField(read_only=True, source="comunidades")
+	bonos = serializers.IntegerField(read_only=True, source="bonos")
+
+	class Meta:
+		model = Municipio
+		geo_field = 'mpoly'
+		fields = ['id', 'nombre', 'poblacion', 'mpoly']
+
 
 
 class sComunidad(serializers.ModelSerializer):
@@ -98,6 +110,16 @@ class sProtagonista(serializers.ModelSerializer):
 
 	class Meta:
 		model = Protagonista
+		fields = '__all__'
+
+
+class sGeoComunidad(GeoFeatureModelSerializer):
+
+	protagonistas = serializers.IntegerField(read_only=True, source="protagonistas")
+	bonos = sProtagonistaBono2(many=True, read_only=True)
+
+	class Meta:
+		model = Comunidad
 		fields = '__all__'
 
 
