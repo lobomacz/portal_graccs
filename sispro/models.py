@@ -63,8 +63,8 @@ class Programa(models.Model):
 	nombre = models.CharField(max_length=200)
 	acronimo = models.CharField('Acrónimo', max_length=45)
 	descripcion = models.TextField('Descripción', max_length=500)
-	institucion = models.ForeignKey(Institucion, on_delete=models.RESTRICT)
-	sector = models.ForeignKey(DetalleTabla, on_delete=models.RESTRICT, limit_choices_to=Q(tabla__tabla='sectores'), null=True, blank=True)
+	institucion = models.ForeignKey(Institucion, on_delete=models.RESTRICT, related_name='programas', related_query_name='programa')
+	sector = models.ForeignKey(DetalleTabla, on_delete=models.RESTRICT, limit_choices_to=Q(tabla__tabla='sectores'), null=True, blank=True, related_name='programas', related_query_name='programa')
 	finalizado = models.BooleanField(default=False)
 
 	class Meta:
@@ -85,10 +85,10 @@ class Proyecto(models.Model):
 	codigo = models.CharField('Código', max_length=50)
 	nombre = models.CharField(max_length=200)
 	acronimo = models.CharField('Acrónimo', max_length=45)
-	programa = models.ForeignKey(Programa, on_delete=models.SET_NULL, null=True, blank=True)
+	programa = models.ForeignKey(Programa, on_delete=models.SET_NULL, null=True, blank=True, related_name='proyectos', related_query_name='proyecto')
 	descripcion = models.CharField('Descripción', max_length=500, null=True, blank=True, default='')
-	sector = models.ForeignKey(DetalleTabla, on_delete=models.RESTRICT, limit_choices_to=Q(tabla__tabla='sectores'))
-	institucion = models.ForeignKey(Institucion, on_delete=models.RESTRICT)
+	sector = models.ForeignKey(DetalleTabla, on_delete=models.RESTRICT, limit_choices_to=Q(tabla__tabla='sectores'), related_name='proyectos_sector', related_query_name='proyecto_sector')
+	institucion = models.ForeignKey(Institucion, on_delete=models.RESTRICT, related_name='proyectos', related_query_name='proyecto')
 	contacto = models.ForeignKey(Contacto, on_delete=models.SET_NULL, null=True, blank=True)
 	finalizado = models.BooleanField(default=False)
 
@@ -135,7 +135,7 @@ class Protagonista(SoftDeletionModel, TimestampsModel):
 	fecha_nacimiento = models.DateField('Fecha de nacimiento')
 	sexo = models.CharField(max_length=1, choices=[('m', 'Masculino'), ('f', 'Femenino')])
 	etnia = models.ForeignKey(DetalleTabla, on_delete=models.RESTRICT, limit_choices_to=Q(tabla__tabla='etnias'))
-	comunidad = models.ForeignKey(Comunidad, on_delete=models.PROTECT)
+	comunidad = models.ForeignKey(Comunidad, on_delete=models.PROTECT, related_name='protagonistas', related_query_name='protagonista')
 	telefono = models.CharField('Teléfono', max_length=9, help_text='8888-8888', null=True, blank=True)
 	promotor = models.BooleanField('Es Promotor', default=False)
 	jvc = models.BooleanField('Miembro de JVC', default=False)
@@ -159,15 +159,15 @@ class ProtagonistaBono(TimestampsModel, models.Model):
 	entregados a protagonistas.
 	""" 
 
-	protagonista = models.ForeignKey(Protagonista, on_delete=models.CASCADE)
-	bono = models.ForeignKey(Bono, on_delete=models.PROTECT)
-	proyecto = models.ForeignKey(Proyecto, on_delete=models.PROTECT)
+	protagonista = models.ForeignKey(Protagonista, on_delete=models.CASCADE, related_name='bonos', related_query_name='bono')
+	bono = models.ForeignKey(Bono, on_delete=models.PROTECT, related_name='protagonistas', related_query_name='protagonista')
+	proyecto = models.ForeignKey(Proyecto, on_delete=models.PROTECT, related_name='beneficiarios', related_query_name='beneficiario')
 	fecha_recibido = models.DateField(help_text='Fecha en que recibió el Bono/Plan de inversión.')
 	tecnico = models.ForeignKey(Tecnico, on_delete=models.RESTRICT, help_text='Técnico que realizó la entrega.', null=True)
-	comunidad = models.ForeignKey(Comunidad, on_delete=models.PROTECT, help_text='Comunidad donde se ejecuta.')
+	comunidad = models.ForeignKey(Comunidad, on_delete=models.PROTECT, help_text='Comunidad donde se ejecuta.', related_name='bonos', related_query_name='bono')
 	observaciones = models.CharField(max_length=500, blank=True, null=True)
-	digitador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='protagonista_bono_digitador')
-	actualizado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='protagonista_bono_actualizador')
+	digitador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+	actualizado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
 	entregado = models.BooleanField(default=False, help_text='El Bono/Plan de inversión se entregó al protagonista.')
 	activo = models.BooleanField(default=True, help_text='Está activo para seguimiento.')
 
@@ -195,14 +195,14 @@ class Capitalizacion(TimestampsModel):
 	entregados a protagonistas.
 	""" 
 
-	p_bono = models.ForeignKey(ProtagonistaBono, on_delete=models.CASCADE, limit_choices_to=Q(bono__tipo__elemento='plan_inversion'))
-	articulo = models.ForeignKey(DetalleTabla, on_delete=models.RESTRICT, limit_choices_to=Q(tabla__tabla='articulos'), related_name='capitalizaciones_articulos')
-	unidad = models.ForeignKey(DetalleTabla, on_delete=models.RESTRICT, limit_choices_to=Q(tabla__tabla='unidades'), related_name='capitalizaciones_unidades', help_text='Unidad de Medida')
+	p_bono = models.ForeignKey(ProtagonistaBono, on_delete=models.CASCADE, limit_choices_to=Q(bono__tipo__elemento='plan_inversion'), related_name='capitalizaciones', related_query_name='capitalizacion')
+	articulo = models.ForeignKey(DetalleTabla, on_delete=models.RESTRICT, limit_choices_to=Q(tabla__tabla='articulos'), related_name='+')
+	unidad = models.ForeignKey(DetalleTabla, on_delete=models.RESTRICT, limit_choices_to=Q(tabla__tabla='unidades'), related_name='+', help_text='Unidad de Medida')
 	cantidad = models.FloatField()
 	costo = models.DecimalField('Costo unitario', max_digits=8, decimal_places=2, help_text='Costo en Córdobas(C$)')
 	total = models.DecimalField('Costo total', max_digits=10, decimal_places=2, help_text='Costo total en Córdobas(C$)', default=0)
-	digitador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='capitalizacion_digitador')
-	actualizado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='capitalizacion_actualizador')
+	digitador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+	actualizado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
 
 	class Meta:
 		ordering = ['p_bono']

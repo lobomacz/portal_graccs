@@ -124,7 +124,7 @@ class Comunidad(models.Model):
         Clase para el modelo Comunidad. Empleado como nivel por defecto de desagregación de indicadores.
         """
         nombre = models.CharField(max_length=150)
-        municipio = models.ForeignKey(Municipio, on_delete=models.RESTRICT)
+        municipio = models.ForeignKey(Municipio, on_delete=models.RESTRICT, related_name='comunidades', related_query_name='comunidad')
         actividades_ec = models.ManyToManyField(DetalleTabla, related_name='+', help_text='Actividades económicas desarrolladas en la comunidad.', limit_choices_to=Q(tabla__tabla='actividades_ec'))
 
         location = models.PointField(null=True)

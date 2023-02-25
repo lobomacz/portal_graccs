@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import Point
-from django.db.models import Q
+from django.db.models import Q, Count, OuterRef, Subquery
 from django.db import transaction
 from django.urls import reverse_lazy
 from django.conf import settings
@@ -20,7 +20,7 @@ from hitcount.views import HitCountMixin
 from sispro.permissions import IsOwnerOrReadOnly
 from sispro.serializers import *
 from sispro.models import *
-from suir.models import Comunidad, DetalleTabla
+from suir.models import Municipio, Comunidad, DetalleTabla
 import datetime
 import json
 
@@ -195,14 +195,42 @@ class TecnicosViewSet(viewsets.ReadOnlyModelViewSet):
 		return Response(serializer.data)
 
 
+# class GeoMunicipiosViewSet(viewsets.ReadOnlyModelViewSet):
+	
+# 	"""
+# 	Viewset básico de municipios
+# 	"""
+
+# 	queryset = Municipio.objects.annotate(comunidades=Count('comunidades', distinct=True), bonos=Count('comunidad__bonos', distinct=True))
+# 	serializer_class = sGeoMunicipio
+# 	bbox_filter_field = "mpoly"
+# 	filter_backends = [filters.InBBoxFilter]
+
+
 # ViewSet de Comunidades
 class ComunidadesViewSet(viewsets.ReadOnlyModelViewSet):
 
 	"""
-	Un viewset sencillo para visualizar técnicos
+	Un viewset sencillo para visualizar comunidades
 	"""
 	queryset = Comunidad.objects.all()
 	serializer_class = sComunidad
+	pagination_class = None
+	page_size = None
+
+
+# ViewSet de Mapas de Comunidades
+class GeoComunidadesViewSet(viewsets.ReadOnlyModelViewSet):
+
+	"""
+	Un viewset para manejar datos de comunidades con 
+	su referencia geográfica.
+	"""
+	#bonos = ProtagonistaBono.objects.filter(comunidad=OuterRef('pk')).order_by('protagonista')
+	queryset = Comunidad.objects.annotate(Count('protagonista', distinct=True), Count('bono')).filter(Q(municipio__pk=12), Q(protagonista__count__gt=0) | Q(bono__count__gt=0))
+	serializer_class = sGeoComunidad
+	bbox_filter_field = "location"
+	filter_backends = [filters.InBBoxFilter]
 	pagination_class = None
 	page_size = None
 
@@ -251,7 +279,8 @@ class ProtagonistasViewSet(viewsets.ModelViewSet):
 
 	queryset = Protagonista.objects.all()
 	serializer_class = sProtagonista
-	filterset_fields = ['cedula']
+	filter_backends = [SearchFilter]
+	search_fields = ['cedula', 'nombres', 'apellidos']
 
 
 
@@ -259,9 +288,10 @@ class ProtagonistasViewSet(viewsets.ModelViewSet):
 class ProtagonistasBonosViewSet(viewsets.ModelViewSet):
 
 	queryset = ProtagonistaBono.objects.filter(bono__tipo__elemento='bono')
-	filterset_fields = ['bono__nombre']
-	permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
 	serializer_class = sProtagonistaBono
+	filter_backends = [SearchFilter]
+	search_fields = ['bono__nombre', 'protagonista__nombres']
+	permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
 	srid = 4326
 
 
@@ -294,7 +324,14 @@ class ProtagonistasBonosViewSet(viewsets.ModelViewSet):
 
 	@action(detail=False)
 	def lista(self, request):
-		bonos = self.get_queryset().filter(activo=True)
+		termino = request.query_params.get('buscar')
+		id_comunidad = request.query_params.get('comunidad')
+		if termino is not None:
+			bonos = self.get_queryset().filter(Q(bono__nombre__icontains=termino) | Q(protagonista__nombres__icontains=termino), activo=True)
+		elif id_comunidad is not None:
+			bonos = self.get_queryset().filter()
+		else:
+			bonos = self.get_queryset().filter(activo=True)
 		serializer = sProtagonistaBono2(bonos, many=True)
 		return Response(serializer.data)
 
