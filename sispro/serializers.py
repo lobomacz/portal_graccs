@@ -115,12 +115,14 @@ class sProtagonista(serializers.ModelSerializer):
 
 class sGeoComunidad(GeoFeatureModelSerializer):
 
-	protagonistas = serializers.IntegerField(read_only=True, source="protagonistas")
+	protagonista__count = serializers.IntegerField(read_only=True)
 	bonos = sProtagonistaBono2(many=True, read_only=True)
+
 
 	class Meta:
 		model = Comunidad
-		fields = '__all__'
+		geo_field = 'location'
+		fields = ['id', 'nombre', 'bonos', 'protagonista__count']
 
 
 

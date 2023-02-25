@@ -195,16 +195,16 @@ class TecnicosViewSet(viewsets.ReadOnlyModelViewSet):
 		return Response(serializer.data)
 
 
-class GeoMunicipiosViewSet(viewsets.ReadOnlyModelViewSet):
+# class GeoMunicipiosViewSet(viewsets.ReadOnlyModelViewSet):
 	
-	"""
-	Viewset básico de municipios
-	"""
+# 	"""
+# 	Viewset básico de municipios
+# 	"""
 
-	queryset = Municipio.objects.annotate(comunidades=Count('comunidad', distinct=True), bonos=Count('comunidad__protagonistabono', distinct=True))
-	serializer_class = sGeoMunicipio
-	bbox_filter_field = "mpoly"
-	filter_backends = [filters.InBBoxFilter]
+# 	queryset = Municipio.objects.annotate(comunidades=Count('comunidades', distinct=True), bonos=Count('comunidad__bonos', distinct=True))
+# 	serializer_class = sGeoMunicipio
+# 	bbox_filter_field = "mpoly"
+# 	filter_backends = [filters.InBBoxFilter]
 
 
 # ViewSet de Comunidades
@@ -226,11 +226,13 @@ class GeoComunidadesViewSet(viewsets.ReadOnlyModelViewSet):
 	Un viewset para manejar datos de comunidades con 
 	su referencia geográfica.
 	"""
-	protagonistas = Protagonista.objects.filter(comunidad=OuterRef('pk')).order_by('apellidos')
-	queryset = Comunidad.objects.annotate(protagonistas=Count('protagonista', distinct=True))
+	#bonos = ProtagonistaBono.objects.filter(comunidad=OuterRef('pk')).order_by('protagonista')
+	queryset = Comunidad.objects.annotate(Count('protagonista', distinct=True), Count('bono')).filter(Q(municipio__pk=12), Q(protagonista__count__gt=0) | Q(bono__count__gt=0))
 	serializer_class = sGeoComunidad
 	bbox_filter_field = "location"
 	filter_backends = [filters.InBBoxFilter]
+	pagination_class = None
+	page_size = None
 
 
 # ViewSet de Etnias
@@ -277,7 +279,8 @@ class ProtagonistasViewSet(viewsets.ModelViewSet):
 
 	queryset = Protagonista.objects.all()
 	serializer_class = sProtagonista
-	filterset_fields = ['cedula']
+	filter_backends = [SearchFilter]
+	search_fields = ['cedula', 'nombres', 'apellidos']
 
 
 
@@ -285,9 +288,10 @@ class ProtagonistasViewSet(viewsets.ModelViewSet):
 class ProtagonistasBonosViewSet(viewsets.ModelViewSet):
 
 	queryset = ProtagonistaBono.objects.filter(bono__tipo__elemento='bono')
-	filterset_fields = ['bono__nombre']
-	permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
 	serializer_class = sProtagonistaBono
+	filter_backends = [SearchFilter]
+	search_fields = ['bono__nombre', 'protagonista__nombres']
+	permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
 	srid = 4326
 
 
@@ -320,7 +324,14 @@ class ProtagonistasBonosViewSet(viewsets.ModelViewSet):
 
 	@action(detail=False)
 	def lista(self, request):
-		bonos = self.get_queryset().filter(activo=True)
+		termino = request.query_params.get('buscar')
+		id_comunidad = request.query_params.get('comunidad')
+		if termino is not None:
+			bonos = self.get_queryset().filter(Q(bono__nombre__icontains=termino) | Q(protagonista__nombres__icontains=termino), activo=True)
+		elif id_comunidad is not None:
+			bonos = self.get_queryset().filter()
+		else:
+			bonos = self.get_queryset().filter(activo=True)
 		serializer = sProtagonistaBono2(bonos, many=True)
 		return Response(serializer.data)
 
