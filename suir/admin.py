@@ -19,12 +19,7 @@ class EstadoListFilter(admin.SimpleListFilter):
 	parameter_name = 'estado'
 
 	def lookups(self, request, model_admin):
-		"""
-		Retorna una lista de tuplas. El primer elemento de cada tupla
-		es el código de valor que se va a poner en la solicitud. El 
-		Segundo elemento es al etiqueta de la opción que aparecerá en la 
-		barra de filtros.
-		"""
+		"""Lista de tuplas para el filtro de estados de publicación."""
 
 		qs = model_admin.get_queryset(request)
 
@@ -108,7 +103,7 @@ class IndicadorAdmin(ModelAdmin):
 
 			return False
 
-		elif obj != None and request.user == obj.creador or request.user.groups.filter(name__in=['Director', 'Supervisor']).exists():
+		elif obj != None and (request.user == obj.creador or request.user.groups.filter(name__in=['Director', 'Supervisor']).exists()):
 			
 			return True
 
@@ -146,7 +141,7 @@ class ValorAdmin(ModelAdmin):
 
 			return False
 
-		elif request.user == obj.digitador or  request.user.groups.filter(name='Supervisor').exists():
+		elif obj != None and (request.user == obj.digitador or  request.user.groups.filter(name='Supervisor').exists()):
 			
 			return True
 
