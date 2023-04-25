@@ -103,7 +103,7 @@ class IndicadorAdmin(ModelAdmin):
 
 			return False
 
-		elif obj != None and (request.user == obj.creador or request.user.groups.filter(name__in=['Director', 'Supervisor']).exists()):
+		elif obj != None and (request.user == obj.creador or request.user.groups.filter(name__in=['Director', 'Supervisor SUIR', 'Supervisor Comunicacion']).exists()):
 			
 			return True
 
@@ -141,7 +141,7 @@ class ValorAdmin(ModelAdmin):
 
 			return False
 
-		elif obj != None and (request.user == obj.digitador or  request.user.groups.filter(name='Supervisor').exists()):
+		elif obj != None and (request.user == obj.digitador or  request.user.groups.filter(name__icontains='Supervisor').exists()):
 			
 			return True
 
@@ -261,7 +261,7 @@ class PublicacionAdmin(ModelAdmin):
 
 				return True
 
-			elif obj.tipo.elemento == 'informe' and request.user.groups.filter(name='Supervisor').exists():
+			elif obj.tipo.elemento == 'informe' and request.user.groups.filter(name='Supervisor Comunicacion').exists():
 
 				return True
 
@@ -296,7 +296,6 @@ class PublicacionAdmin(ModelAdmin):
 			if obj.tipo.elemento == 'noticia':
 
 				if not request.user.has_perms(['suir.crear_noticia', 'suir.add_publicacion']):
-					print('Sin permisos de crear')
 					
 					raise PermissionDenied("No tiene permiso para crear noticias.")
 
